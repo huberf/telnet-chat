@@ -9,7 +9,8 @@ function receiveData(data, id) {
         sockets[i].socket.write(data);
       }
     } else {
-
+      sockets[i].socket.end();
+    }
   }
 }
 
