@@ -2,14 +2,23 @@ var net = require('net');
 
 var sockets = [];
 
+function cleanInput(data) {
+	return data.toString().replace(/(\r\n|\n|\r)/gm,"");
+}
+
 function receiveData(data, id) {
+  var cleanData = cleanInput(data);
   for( var i = 0; i < sockets.length; i++) {
-    if( data != "@quit") {
+    if( cleanData != "@quit") {
       if( sockets[i].id != id) {
         sockets[i].socket.write(data);
       }
     } else {
-      sockets[i].socket.end();
+			if( sockets[i].id == id) {
+				console.log('Quit command sent');
+				sockets[i].socket.end();
+        sockets.splice(i, 1)
+			}
     }
   }
 }
@@ -38,3 +47,5 @@ function newSocket(socket) {
 var server = net.createServer( newSocket )
 
 server.listen(8888);
+
+console.log('Service started on port 8888');
